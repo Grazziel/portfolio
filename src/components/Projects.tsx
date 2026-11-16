@@ -2,17 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 import { useLanguage } from '../i18n'
 
 // Datos de cada proyecto (iguales en los dos idiomas).
-// "video" → botón "Vídeo demostrativo" que abre el vídeo en una ventana; si no, "demo" → botón "Ver la web";
-// con "steps" en los textos → botón "Cómo funciona"; sin nada de esto → "Vídeo demostrativo" desactivado.
+// "demo" → botón "Ver la web"; "video" → botón "Vídeo demostrativo" que abre el vídeo en una ventana (pueden ir los dos).
+// Sin vídeo, con "steps" en los textos → botón "Cómo funciona"; sin nada de esto → "Vídeo demostrativo" desactivado.
 // "image" → captura en public/projects/; sin ella la tarjeta muestra un degradado con el nombre.
 type ProjectInfo = { stack: string; image?: string; video?: string; demo?: string; github?: string }
 
 const projectInfo: Record<string, ProjectInfo> = {
   'the-knife': { stack: 'React · Flask · PostgreSQL', image: '/projects/TheKnife.png', demo: 'https://the-knife.onrender.com/', github: 'https://github.com/4GeeksAcademy/TheKnife-pt-137' },
   'starwars-api': { stack: 'Flask · SQLAlchemy', github: 'https://github.com/Grazziel/starwars-api' },
-  'starwars-blog': { stack: 'React · Context API', image: '/projects/Blog-StarWars.png', video: '/videos/starwars-blog.mp4', github: 'https://github.com/Grazziel/starwars-blog' },
+  'starwars-blog': { stack: 'React · Context API', image: '/projects/Blog-StarWars.png', demo: 'https://starwars-blog-graziele.vercel.app/', video: '/videos/starwars-blog.mp4', github: 'https://github.com/Grazziel/starwars-blog' },
   'jwt-auth': { stack: 'Flask · React · JWT', github: 'https://github.com/Grazziel/jwt-auth-flask-react' },
-  'contact-list': { stack: 'React · Context API', image: '/projects/List-contact.png', video: '/videos/contact-list.mp4', github: 'https://github.com/Grazziel/contactList-Grazi-Julio' },
+  'contact-list': { stack: 'React · Context API', image: '/projects/List-contact.png', demo: 'https://graziele-contact-list.vercel.app/', video: '/videos/contact-list.mp4', github: 'https://github.com/Grazziel/contactList-Grazi-Julio' },
 }
 
 function VideoModal({ src, title, onClose }: { src: string; title: string; onClose: () => void }) {
@@ -109,19 +109,20 @@ function ProjectCard({ id, title, text, steps, onOpenVideo, onOpenSteps }: {
           <p className="project-card-stack">{info.stack}</p>
           <p className="project-card-text">{text}</p>
           <div className="project-links">
+            {info.demo && (
+              <a className="project-button" href={info.demo} target="_blank" rel="noopener noreferrer">
+                {t.projects.liveSite}
+              </a>
+            )}
             {info.video ? (
               <button type="button" className="project-button" onClick={() => onOpenVideo(info.video!)}>
                 ▶ {t.projects.videoDemo}
               </button>
-            ) : info.demo ? (
-              <a className="project-button" href={info.demo} target="_blank" rel="noopener noreferrer">
-                {t.projects.liveSite}
-              </a>
             ) : steps ? (
               <button type="button" className="project-button" onClick={onOpenSteps}>
                 {t.projects.howItWorks}
               </button>
-            ) : (
+            ) : !info.demo && (
               <span className="project-button is-disabled" aria-disabled="true" title={t.projects.demoSoon}>
                 {t.projects.videoDemo}
               </span>
